@@ -4,6 +4,7 @@ import com.example.SmartShop.entity.enums.PaymentStatus;
 import com.example.SmartShop.entity.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,8 +17,10 @@ import java.time.LocalDateTime;
 @Builder
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
+    private String id;
 
     // numéro séquentiel de paiement pour la commande (1,2,3...)
     @Column(nullable = false)

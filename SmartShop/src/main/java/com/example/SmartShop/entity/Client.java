@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,14 +15,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @PrimaryKeyJoinColumn(name = "user_id")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Client extends User {
 
     @NotBlank
     @Column(nullable = false)
-    private String name; // nom entreprise / contact
+    private String name; // nom entreprise/contact
 
     @Email
     @Column(nullable = false, unique = true)
@@ -41,4 +41,3 @@ public class Client extends User {
 
     private LocalDateTime lastOrderAt;
 }
-

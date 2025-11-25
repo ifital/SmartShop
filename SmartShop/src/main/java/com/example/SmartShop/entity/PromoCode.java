@@ -3,6 +3,7 @@ package com.example.SmartShop.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +15,10 @@ import java.time.LocalDateTime;
 @Builder
 public class PromoCode {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", updatable = false, nullable = false, unique = true, length = 36)
+    private String id;
 
     @Pattern(regexp = "PROMO-[A-Z0-9]{4}")
     @Column(nullable = false, unique = true)

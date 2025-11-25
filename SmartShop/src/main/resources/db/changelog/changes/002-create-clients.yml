@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002
+      author: smartshop
+      changes:
+        - createTable:
+            tableName: clients
+            columns:
+              - column:
+                  name: user_id
+                  type: VARCHAR(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: tier
+                  type: VARCHAR(20)
+                  defaultValue: BASIC
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_orders
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_spent
+                  type: DECIMAL(19,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_order_at
+                  type: TIMESTAMP
+              - column:
+                  name: last_order_at
+                  type: TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: clients
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_clients_user
