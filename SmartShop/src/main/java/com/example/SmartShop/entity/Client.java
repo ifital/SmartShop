@@ -1,0 +1,44 @@
+package com.example.SmartShop.entity;
+
+import com.example.SmartShop.entity.enums.CustomerTier;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "clients")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@PrimaryKeyJoinColumn(name = "user_id")
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Client extends User {
+
+    @NotBlank
+    @Column(nullable = false)
+    private String name; // nom entreprise / contact
+
+    @Email
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CustomerTier tier = CustomerTier.BASIC;
+
+    @Column(nullable = false)
+    private Long totalOrders = 0L;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal totalSpent = BigDecimal.ZERO;
+
+    private LocalDateTime firstOrderAt;
+
+    private LocalDateTime lastOrderAt;
+}
+
