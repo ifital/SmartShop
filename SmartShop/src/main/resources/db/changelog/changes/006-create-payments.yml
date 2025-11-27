@@ -40,12 +40,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: reference
-                  type: VARCHAR(50)
-              - column:
-                  name: bank_name
-                  type: VARCHAR(100)
-              - column:
                   name: payment_date
                   type: TIMESTAMP
               - column:

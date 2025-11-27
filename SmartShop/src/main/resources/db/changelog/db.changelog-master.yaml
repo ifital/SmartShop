@@ -11,5 +11,4 @@ databaseChangeLog:
       file: db/changelog/changes/005-create-order-items.yml
   - include:
       file: db/changelog/changes/006-create-payments.yml
-  - include:
-      file: db/changelog/changes/007-create-promo-codes.yml
+
