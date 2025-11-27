@@ -5,10 +5,11 @@ import java.math.BigDecimal;
 
 @Data
 public class OrderItemDTO {
-    private Long id;
-    private Long productId;
+    private String id;
+    private String productId;
     private String productName;
+    private Integer quantity;
     private BigDecimal unitPrice;
-    private int quantity;
-    private BigDecimal totalLine;
+    private BigDecimal lineTotal;
+    private String orderId;
 }
