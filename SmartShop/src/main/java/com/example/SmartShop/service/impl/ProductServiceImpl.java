@@ -8,6 +8,8 @@ import com.example.SmartShop.mapper.ProductMapper;
 import com.example.SmartShop.repository.ProductRepository;
 import com.example.SmartShop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,11 +49,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAll() {
-        return productRepository.findAll()
-                .stream()
-                .map(productMapper::toDTO)
-                .toList();
+    public Page<ProductDTO> getAll(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(productMapper::toDTO);
     }
 
     @Override

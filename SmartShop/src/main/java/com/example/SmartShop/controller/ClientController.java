@@ -5,6 +5,9 @@ import com.example.SmartShop.dto.ClientDTO;
 import com.example.SmartShop.dto.ClientUpdateDTO;
 import com.example.SmartShop.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +43,11 @@ public class ClientController {
     // GET ALL
     // -------------------------------
     @GetMapping
-    public ResponseEntity<List<ClientDTO>> getAllClients() {
-        return ResponseEntity.ok(clientService.getAll());
+    public ResponseEntity<Page<ClientDTO>> getAllClients(
+            @PageableDefault(size = 10, page = 0) Pageable pageable
+    ) {
+        Page<ClientDTO> clients = clientService.getAll(pageable);
+        return ResponseEntity.ok(clients);
     }
 
     // -------------------------------

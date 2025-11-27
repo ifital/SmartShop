@@ -8,6 +8,8 @@ import com.example.SmartShop.mapper.ClientMapper;
 import com.example.SmartShop.repository.ClientRepository;
 import com.example.SmartShop.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,14 +56,12 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientDTO> getAll() {
-        return clientRepository.findAll()
-                .stream()
-                .map(clientMapper::toDTO)
-                .toList();
+    public Page<ClientDTO> getAll(Pageable pageable) {
+        return clientRepository.findAll(pageable)
+                .map(clientMapper::toDTO);
     }
 
-    @Override
+        @Override
     public void delete(String id) {
         if (!clientRepository.existsById(id)) {
             throw new RuntimeException("Client introuvable");

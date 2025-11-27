@@ -5,6 +5,9 @@ import com.example.SmartShop.dto.ProductDTO;
 import com.example.SmartShop.dto.ProductUpdateDTO;
 import com.example.SmartShop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +43,10 @@ public class ProductController {
     // GET ALL
     // -------------------------------
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        List<ProductDTO> products = productService.getAll();
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(
+            @PageableDefault(size = 10, page = 0) Pageable pageable
+    ) {
+        Page<ProductDTO> products = productService.getAll(pageable);
         return ResponseEntity.ok(products);
     }
 
