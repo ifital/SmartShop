@@ -41,10 +41,6 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status = PaymentStatus.EN_ATTENTE;
 
-    private String reference; // reçu, chq num, virement ref
-
-    private String bankName; // si applicable
-
     private LocalDateTime paymentDate; // date fournie par client
 
     private LocalDateTime encashmentDate; // date d'encaissement si applicable

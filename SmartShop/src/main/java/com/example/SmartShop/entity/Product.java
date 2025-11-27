@@ -32,6 +32,4 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    @Column(nullable = false)
-    private Boolean deleted = false; // soft delete flag
 }

@@ -29,15 +29,6 @@ public class Client extends User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CustomerTier tier = CustomerTier.BASIC;
+    private CustomerTier tier = CustomerTier.BASIC; // BASIC, SILVER, GOLD, PLATINUM
 
-    @Column(nullable = false)
-    private Long totalOrders = 0L;
-
-    @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal totalSpent = BigDecimal.ZERO;
-
-    private LocalDateTime firstOrderAt;
-
-    private LocalDateTime lastOrderAt;
 }

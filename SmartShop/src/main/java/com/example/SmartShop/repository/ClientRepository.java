@@ -2,10 +2,10 @@ package com.example.SmartShop.repository;
 
 import com.example.SmartShop.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 
-@Repository
 public interface ClientRepository extends JpaRepository<Client, String> {
 
+    boolean existsByEmail(String email);
 }
