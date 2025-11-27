@@ -1,10 +1,12 @@
 package com.example.SmartShop.dto;
 
+import com.example.SmartShop.entity.enums.UserRole;
 import lombok.Data;
 
 @Data
 public class UserDTO {
-    private Long id;
+
+    private String id;
     private String username;
-    private String role; // ADMIN / CLIENT
+    private UserRole role; // CLIENT _ ADMIN
 }

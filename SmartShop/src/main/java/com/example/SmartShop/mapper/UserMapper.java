@@ -1,12 +1,19 @@
 package com.example.SmartShop.mapper;
 
 import com.example.SmartShop.dto.UserDTO;
+import com.example.SmartShop.dto.UserRegisterDTO;
 import com.example.SmartShop.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    UserDTO toDto(User entity);
-    User toEntity(UserDTO dto);
-}
 
+    // ENTITY -> DTO
+    UserDTO toDTO(User user);
+
+    // REGISTER DTO -> ENTITY
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true) // le password sera hashé séparément
+    User toEntity(UserRegisterDTO dto);
+}
