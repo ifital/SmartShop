@@ -29,24 +29,6 @@ databaseChangeLog:
                   defaultValue: BASIC
                   constraints:
                     nullable: false
-              - column:
-                  name: total_orders
-                  type: BIGINT
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-              - column:
-                  name: total_spent
-                  type: DECIMAL(19,2)
-                  defaultValueNumeric: 0
-                  constraints:
-                    nullable: false
-              - column:
-                  name: first_order_at
-                  type: TIMESTAMP
-              - column:
-                  name: last_order_at
-                  type: TIMESTAMP
         - addForeignKeyConstraint:
             baseTableName: clients
             baseColumnNames: user_id
