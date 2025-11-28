@@ -1,5 +1,6 @@
 package com.example.SmartShop.dto;
 
+import com.example.SmartShop.entity.enums.OrderStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -8,21 +9,23 @@ import java.util.List;
 
 @Data
 public class OrderDTO {
-    private Long id;
-    private Long clientId;
-    private String clientName;
 
-    private LocalDateTime orderDate;
+    private String id;
+    private String clientId;
+
+    private LocalDateTime createdAt;
 
     private BigDecimal subTotal;
-    private BigDecimal discount;
-    private BigDecimal tva;
-    private BigDecimal total;
-    private BigDecimal remainingAmount;
+    private BigDecimal totalDiscount;
+    private BigDecimal netHt;
+    private BigDecimal vat;
+    private BigDecimal totalTtc;
 
     private String promoCode;
-    private String status; // PENDING / CONFIRMED / REJECTED / CANCELED
+    private OrderStatus status;
 
+    private BigDecimal amountRemaining;
+
+    // liste des items de la commande
     private List<OrderItemDTO> items;
-    private List<PaymentDTO> payments;
 }
