@@ -1,12 +1,10 @@
 package com.example.SmartShop.service;
 
-import com.example.SmartShop.dto.ProductCreateDTO;
-import com.example.SmartShop.dto.ProductDTO;
-import com.example.SmartShop.dto.ProductUpdateDTO;
+import com.example.SmartShop.dto.product.ProductCreateDTO;
+import com.example.SmartShop.dto.product.ProductDTO;
+import com.example.SmartShop.dto.product.ProductUpdateDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface ProductService {
 

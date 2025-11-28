@@ -1,8 +1,8 @@
 package com.example.SmartShop.service.impl;
 
-import com.example.SmartShop.dto.ClientCreateDTO;
-import com.example.SmartShop.dto.ClientDTO;
-import com.example.SmartShop.dto.ClientUpdateDTO;
+import com.example.SmartShop.dto.client.ClientCreateDTO;
+import com.example.SmartShop.dto.client.ClientDTO;
+import com.example.SmartShop.dto.client.ClientUpdateDTO;
 import com.example.SmartShop.entity.Client;
 import com.example.SmartShop.mapper.ClientMapper;
 import com.example.SmartShop.repository.ClientRepository;

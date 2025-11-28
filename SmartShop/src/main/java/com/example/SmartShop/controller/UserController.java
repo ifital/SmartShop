@@ -1,8 +1,8 @@
 package com.example.SmartShop.controller;
 
-import com.example.SmartShop.dto.UserDTO;
-import com.example.SmartShop.dto.UserLoginDTO;
-import com.example.SmartShop.dto.UserRegisterDTO;
+import com.example.SmartShop.dto.user.UserDTO;
+import com.example.SmartShop.dto.user.UserLoginDTO;
+import com.example.SmartShop.dto.user.UserRegisterDTO;
 import com.example.SmartShop.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

@@ -1,5 +1,6 @@
-package com.example.SmartShop.dto;
+package com.example.SmartShop.dto.order;
 
+import com.example.SmartShop.dto.orderItem.OrderItemDTO;
 import com.example.SmartShop.entity.enums.OrderStatus;
 import lombok.Data;
 

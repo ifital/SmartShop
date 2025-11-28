@@ -1,8 +1,8 @@
 package com.example.SmartShop.service.impl;
 
-import com.example.SmartShop.dto.UserDTO;
-import com.example.SmartShop.dto.UserLoginDTO;
-import com.example.SmartShop.dto.UserRegisterDTO;
+import com.example.SmartShop.dto.user.UserDTO;
+import com.example.SmartShop.dto.user.UserLoginDTO;
+import com.example.SmartShop.dto.user.UserRegisterDTO;
 import com.example.SmartShop.entity.User;
 import com.example.SmartShop.mapper.UserMapper;
 import com.example.SmartShop.repository.UserRepository;

@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto;
+package com.example.SmartShop.dto.client;
 
 import com.example.SmartShop.entity.enums.CustomerTier;
 import lombok.*;

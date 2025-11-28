@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto;
+package com.example.SmartShop.dto.orderItem;
 
 import jakarta.validation.constraints.Positive;
 import lombok.Data;

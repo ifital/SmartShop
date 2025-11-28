@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto;
+package com.example.SmartShop.dto.product;
 
 import lombok.Data;
 

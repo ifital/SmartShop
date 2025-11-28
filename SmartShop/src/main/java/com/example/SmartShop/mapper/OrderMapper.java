@@ -1,8 +1,8 @@
 package com.example.SmartShop.mapper;
 
-import com.example.SmartShop.dto.OrderCreateDTO;
-import com.example.SmartShop.dto.OrderDTO;
-import com.example.SmartShop.dto.OrderUpdateDTO;
+import com.example.SmartShop.dto.order.OrderCreateDTO;
+import com.example.SmartShop.dto.order.OrderDTO;
+import com.example.SmartShop.dto.order.OrderUpdateDTO;
 import com.example.SmartShop.entity.Order;
 import org.mapstruct.*;
 

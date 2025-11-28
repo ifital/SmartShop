@@ -1,9 +1,9 @@
 package com.example.SmartShop.controller;
 
-import com.example.SmartShop.dto.ClientCreateDTO;
-import com.example.SmartShop.dto.ClientDTO;
-import com.example.SmartShop.dto.ClientUpdateDTO;
-import com.example.SmartShop.dto.UserDTO;
+import com.example.SmartShop.dto.client.ClientCreateDTO;
+import com.example.SmartShop.dto.client.ClientDTO;
+import com.example.SmartShop.dto.client.ClientUpdateDTO;
+import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
 import com.example.SmartShop.service.ClientService;
 import com.example.SmartShop.service.UserService;

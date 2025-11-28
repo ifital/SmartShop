@@ -1,11 +1,12 @@
 package com.example.SmartShop.controller;
 
-import com.example.SmartShop.dto.order.OrderCreateDTO;
-import com.example.SmartShop.dto.order.OrderDTO;
-import com.example.SmartShop.dto.order.OrderUpdateDTO;
+
+import com.example.SmartShop.dto.payment.PaymentCreateDTO;
+import com.example.SmartShop.dto.payment.PaymentDTO;
+import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
 import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
-import com.example.SmartShop.service.OrderService;
+import com.example.SmartShop.service.PaymentService;
 import com.example.SmartShop.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,11 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
-public class OrderController {
+public class PaymentController {
 
-    private final OrderService orderService;
+    private final PaymentService paymentService;
     private final UserService userService;
 
     // -------------------------------
@@ -37,68 +38,82 @@ public class OrderController {
     }
 
     // -------------------------------
-    // CREATE ORDER (ADMIN ONLY)
+    // CREATE (ADMIN ONLY)
     // -------------------------------
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(
-            @Valid @RequestBody OrderCreateDTO dto,
+    public ResponseEntity<PaymentDTO> createPayment(
+            @Valid @RequestBody PaymentCreateDTO dto,
             HttpSession session
     ) {
         checkAdmin(session);
-        OrderDTO created = orderService.create(dto);
+        PaymentDTO created = paymentService.create(dto);
         return ResponseEntity.ok(created);
     }
 
     // -------------------------------
-    // GET ORDER BY ID (ADMIN ONLY)
+    // GET BY ID (ADMIN ONLY)
     // -------------------------------
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrder(
+    public ResponseEntity<PaymentDTO> getPayment(
             @PathVariable String id,
             HttpSession session
     ) {
         checkAdmin(session);
-        OrderDTO order = orderService.getById(id);
-        return ResponseEntity.ok(order);
+        PaymentDTO payment = paymentService.getById(id);
+        return ResponseEntity.ok(payment);
     }
 
     // -------------------------------
-    // GET ALL ORDERS (ADMIN ONLY, paginated)
+    // GET ALL (ADMIN ONLY, paginated)
     // -------------------------------
     @GetMapping
-    public ResponseEntity<Page<OrderDTO>> getAllOrders(
+    public ResponseEntity<Page<PaymentDTO>> getAllPayments(
             @PageableDefault(size = 10, page = 0) Pageable pageable,
             HttpSession session
     ) {
         checkAdmin(session);
-        Page<OrderDTO> orders = orderService.getAll(pageable);
-        return ResponseEntity.ok(orders);
+        Page<PaymentDTO> payments = paymentService.getAll(pageable);
+        return ResponseEntity.ok(payments);
     }
 
     // -------------------------------
-    // UPDATE ORDER (ADMIN ONLY)
+    // GET BY ORDER ID (ADMIN ONLY, paginated)
     // -------------------------------
-    @PutMapping("/{id}")
-    public ResponseEntity<OrderDTO> updateOrder(
-            @PathVariable String id,
-            @Valid @RequestBody OrderUpdateDTO dto,
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Page<PaymentDTO>> getPaymentsByOrder(
+            @PathVariable String orderId,
+            @PageableDefault(size = 10, page = 0) Pageable pageable,
             HttpSession session
     ) {
         checkAdmin(session);
-        OrderDTO updated = orderService.update(id, dto);
+        Page<PaymentDTO> payments = paymentService.getByOrderId(orderId, pageable);
+        return ResponseEntity.ok(payments);
+    }
+
+    // -------------------------------
+    // UPDATE (ADMIN ONLY)
+    // -------------------------------
+    @PutMapping("/{id}")
+    public ResponseEntity<PaymentDTO> updatePayment(
+            @PathVariable String id,
+            @Valid @RequestBody PaymentUpdateDTO dto,
+            HttpSession session
+    ) {
+        checkAdmin(session);
+        PaymentDTO updated = paymentService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
 
     // -------------------------------
-    // DELETE ORDER (ADMIN ONLY)
+    // DELETE (ADMIN ONLY)
     // -------------------------------
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(
+    public ResponseEntity<Void> deletePayment(
             @PathVariable String id,
             HttpSession session
     ) {
         checkAdmin(session);
-        orderService.delete(id);
+        paymentService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

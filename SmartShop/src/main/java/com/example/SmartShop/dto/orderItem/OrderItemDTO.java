@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto;
+package com.example.SmartShop.dto.orderItem;
 
 import lombok.Data;
 import java.math.BigDecimal;
