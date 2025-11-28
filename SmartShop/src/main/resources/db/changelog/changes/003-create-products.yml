@@ -32,3 +32,5 @@ databaseChangeLog:
                   name: deleted
                   type: BOOLEAN
                   defaultValueBoolean: false
+                  constraints:
+                    nullable: false

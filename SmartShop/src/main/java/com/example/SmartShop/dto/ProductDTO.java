@@ -10,4 +10,5 @@ public class ProductDTO {
     private String name;
     private BigDecimal unitPrice;
     private Integer stock;
+    private boolean deleted ;
 }

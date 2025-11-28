@@ -12,4 +12,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
 
     // Vérifier si un produit existe déjà dans une commande (optionnel)
     boolean existsByOrderIdAndProductId(String orderId, String productId);
+
+    boolean existsByProductId(String productId);
+
 }
