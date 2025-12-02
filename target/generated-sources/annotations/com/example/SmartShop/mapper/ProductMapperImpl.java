@@ -1,15 +1,15 @@
 package com.example.SmartShop.mapper;
 
-import com.example.SmartShop.dto.ProductCreateDTO;
-import com.example.SmartShop.dto.ProductDTO;
-import com.example.SmartShop.dto.ProductUpdateDTO;
+import com.example.SmartShop.dto.product.ProductCreateDTO;
+import com.example.SmartShop.dto.product.ProductDTO;
+import com.example.SmartShop.dto.product.ProductUpdateDTO;
 import com.example.SmartShop.entity.Product;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-27T17:27:44+0100",
+    date = "2025-11-28T17:19:29+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
 )
 @Component
@@ -27,6 +27,7 @@ public class ProductMapperImpl implements ProductMapper {
         productDTO.setName( product.getName() );
         productDTO.setUnitPrice( product.getUnitPrice() );
         productDTO.setStock( product.getStock() );
+        productDTO.setDeleted( product.isDeleted() );
 
         return productDTO;
     }

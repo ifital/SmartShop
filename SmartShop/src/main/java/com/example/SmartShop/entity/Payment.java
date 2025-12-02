@@ -24,7 +24,7 @@ public class Payment {
 
     // numéro séquentiel de paiement pour la commande (1,2,3...)
     @Column(nullable = false)
-    private Integer paymentNumber;
+    private int paymentNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false)

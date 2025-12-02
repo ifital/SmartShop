@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto.orderStatistic;
+package com.example.SmartShop.dto.clientStatistic;
 
 import lombok.Builder;
 import lombok.Data;

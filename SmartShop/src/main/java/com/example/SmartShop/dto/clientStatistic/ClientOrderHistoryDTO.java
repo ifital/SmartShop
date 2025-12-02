@@ -1,4 +1,4 @@
-package com.example.SmartShop.dto.orderStatistic;
+package com.example.SmartShop.dto.clientStatistic;
 
 import com.example.SmartShop.entity.enums.OrderStatus;
 import lombok.Builder;

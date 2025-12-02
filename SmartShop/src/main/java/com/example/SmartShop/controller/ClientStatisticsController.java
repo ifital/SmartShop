@@ -1,8 +1,8 @@
 package com.example.SmartShop.controller;
 
 
-import com.example.SmartShop.dto.orderStatistic.ClientOrderHistoryDTO;
-import com.example.SmartShop.dto.orderStatistic.ClientOrderStatisticsDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderHistoryDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderStatisticsDTO;
 import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
 import com.example.SmartShop.service.ClientStatisticsService;

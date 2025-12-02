@@ -1,8 +1,8 @@
 package com.example.SmartShop.service.impl;
 
 
-import com.example.SmartShop.dto.orderStatistic.ClientOrderHistoryDTO;
-import com.example.SmartShop.dto.orderStatistic.ClientOrderStatisticsDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderHistoryDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderStatisticsDTO;
 import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.repository.OrderRepository;
 import com.example.SmartShop.service.ClientStatisticsService;

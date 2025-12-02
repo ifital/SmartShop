@@ -30,7 +30,7 @@ public class Product {
 
     @PositiveOrZero
     @Column(nullable = false)
-    private Integer stock;
+    private int stock;
 
     @Column(nullable = false)
     private boolean deleted = false;

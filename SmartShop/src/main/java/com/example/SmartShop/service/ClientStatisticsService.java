@@ -2,8 +2,8 @@ package com.example.SmartShop.service;
 
 
 
-import com.example.SmartShop.dto.orderStatistic.ClientOrderHistoryDTO;
-import com.example.SmartShop.dto.orderStatistic.ClientOrderStatisticsDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderHistoryDTO;
+import com.example.SmartShop.dto.clientStatistic.ClientOrderStatisticsDTO;
 
 import java.util.List;
 

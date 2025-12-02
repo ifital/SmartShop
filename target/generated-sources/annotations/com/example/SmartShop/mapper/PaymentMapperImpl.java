@@ -1,163 +1,91 @@
 package com.example.SmartShop.mapper;
 
-import com.example.SmartShop.dto.PaymentDTO;
+import com.example.SmartShop.dto.payment.PaymentCreateDTO;
+import com.example.SmartShop.dto.payment.PaymentDTO;
+import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
+import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.Payment;
-import com.example.SmartShop.entity.enums.PaymentStatus;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
 import javax.annotation.processing.Generated;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeConstants;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-27T17:27:45+0100",
+    date = "2025-11-28T17:19:29+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
 )
 @Component
 public class PaymentMapperImpl implements PaymentMapper {
 
-    private final DatatypeFactory datatypeFactory;
-
-    public PaymentMapperImpl() {
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        }
-        catch ( DatatypeConfigurationException ex ) {
-            throw new RuntimeException( ex );
-        }
-    }
-
     @Override
-    public PaymentDTO toDto(Payment entity) {
-        if ( entity == null ) {
-            return null;
-        }
-
-        PaymentDTO paymentDTO = new PaymentDTO();
-
-        if ( entity.getId() != null ) {
-            paymentDTO.setId( Long.parseLong( entity.getId() ) );
-        }
-        if ( entity.getPaymentNumber() != null ) {
-            paymentDTO.setPaymentNumber( entity.getPaymentNumber() );
-        }
-        paymentDTO.setAmount( entity.getAmount() );
-        if ( entity.getStatus() != null ) {
-            paymentDTO.setStatus( entity.getStatus().name() );
-        }
-        paymentDTO.setPaymentDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( entity.getPaymentDate() ) ) );
-        paymentDTO.setEncashmentDate( xmlGregorianCalendarToLocalDate( localDateTimeToXmlGregorianCalendar( entity.getEncashmentDate() ) ) );
-
-        return paymentDTO;
-    }
-
-    @Override
-    public Payment toEntity(PaymentDTO dto) {
+    public Payment toEntity(PaymentCreateDTO dto) {
         if ( dto == null ) {
             return null;
         }
 
         Payment.PaymentBuilder payment = Payment.builder();
 
-        if ( dto.getId() != null ) {
-            payment.id( String.valueOf( dto.getId() ) );
-        }
-        payment.paymentNumber( dto.getPaymentNumber() );
+        payment.order( paymentCreateDTOToOrder( dto ) );
         payment.amount( dto.getAmount() );
-        if ( dto.getStatus() != null ) {
-            payment.status( Enum.valueOf( PaymentStatus.class, dto.getStatus() ) );
-        }
-        payment.paymentDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( dto.getPaymentDate() ) ) );
-        payment.encashmentDate( xmlGregorianCalendarToLocalDateTime( localDateToXmlGregorianCalendar( dto.getEncashmentDate() ) ) );
+        payment.type( dto.getType() );
+        payment.paymentDate( dto.getPaymentDate() );
 
         return payment.build();
     }
 
-    private XMLGregorianCalendar localDateToXmlGregorianCalendar( LocalDate localDate ) {
-        if ( localDate == null ) {
+    @Override
+    public PaymentDTO toDTO(Payment payment) {
+        if ( payment == null ) {
             return null;
         }
 
-        return datatypeFactory.newXMLGregorianCalendarDate(
-            localDate.getYear(),
-            localDate.getMonthValue(),
-            localDate.getDayOfMonth(),
-            DatatypeConstants.FIELD_UNDEFINED );
+        PaymentDTO paymentDTO = new PaymentDTO();
+
+        paymentDTO.setOrderId( paymentOrderId( payment ) );
+        paymentDTO.setId( payment.getId() );
+        paymentDTO.setPaymentNumber( payment.getPaymentNumber() );
+        paymentDTO.setAmount( payment.getAmount() );
+        paymentDTO.setType( payment.getType() );
+        paymentDTO.setStatus( payment.getStatus() );
+        paymentDTO.setPaymentDate( payment.getPaymentDate() );
+        paymentDTO.setEncashmentDate( payment.getEncashmentDate() );
+
+        return paymentDTO;
     }
 
-    private XMLGregorianCalendar localDateTimeToXmlGregorianCalendar( LocalDateTime localDateTime ) {
-        if ( localDateTime == null ) {
-            return null;
+    @Override
+    public void updateEntityFromDTO(PaymentUpdateDTO dto, Payment entity) {
+        if ( dto == null ) {
+            return;
         }
 
-        return datatypeFactory.newXMLGregorianCalendar(
-            localDateTime.getYear(),
-            localDateTime.getMonthValue(),
-            localDateTime.getDayOfMonth(),
-            localDateTime.getHour(),
-            localDateTime.getMinute(),
-            localDateTime.getSecond(),
-            localDateTime.get( ChronoField.MILLI_OF_SECOND ),
-            DatatypeConstants.FIELD_UNDEFINED );
+        entity.setStatus( dto.getStatus() );
+        entity.setEncashmentDate( dto.getEncashmentDate() );
     }
 
-    private static LocalDate xmlGregorianCalendarToLocalDate( XMLGregorianCalendar xcal ) {
-        if ( xcal == null ) {
+    protected Order paymentCreateDTOToOrder(PaymentCreateDTO paymentCreateDTO) {
+        if ( paymentCreateDTO == null ) {
             return null;
         }
 
-        return LocalDate.of( xcal.getYear(), xcal.getMonth(), xcal.getDay() );
+        Order.OrderBuilder order = Order.builder();
+
+        order.id( paymentCreateDTO.getOrderId() );
+
+        return order.build();
     }
 
-    private static LocalDateTime xmlGregorianCalendarToLocalDateTime( XMLGregorianCalendar xcal ) {
-        if ( xcal == null ) {
+    private String paymentOrderId(Payment payment) {
+        if ( payment == null ) {
             return null;
         }
-
-        if ( xcal.getYear() != DatatypeConstants.FIELD_UNDEFINED
-            && xcal.getMonth() != DatatypeConstants.FIELD_UNDEFINED
-            && xcal.getDay() != DatatypeConstants.FIELD_UNDEFINED
-            && xcal.getHour() != DatatypeConstants.FIELD_UNDEFINED
-            && xcal.getMinute() != DatatypeConstants.FIELD_UNDEFINED
-        ) {
-            if ( xcal.getSecond() != DatatypeConstants.FIELD_UNDEFINED
-                && xcal.getMillisecond() != DatatypeConstants.FIELD_UNDEFINED ) {
-                return LocalDateTime.of(
-                    xcal.getYear(),
-                    xcal.getMonth(),
-                    xcal.getDay(),
-                    xcal.getHour(),
-                    xcal.getMinute(),
-                    xcal.getSecond(),
-                    Duration.ofMillis( xcal.getMillisecond() ).getNano()
-                );
-            }
-            else if ( xcal.getSecond() != DatatypeConstants.FIELD_UNDEFINED ) {
-                return LocalDateTime.of(
-                    xcal.getYear(),
-                    xcal.getMonth(),
-                    xcal.getDay(),
-                    xcal.getHour(),
-                    xcal.getMinute(),
-                    xcal.getSecond()
-                );
-            }
-            else {
-                return LocalDateTime.of(
-                    xcal.getYear(),
-                    xcal.getMonth(),
-                    xcal.getDay(),
-                    xcal.getHour(),
-                    xcal.getMinute()
-                );
-            }
+        Order order = payment.getOrder();
+        if ( order == null ) {
+            return null;
         }
-        return null;
+        String id = order.getId();
+        if ( id == null ) {
+            return null;
+        }
+        return id;
     }
 }

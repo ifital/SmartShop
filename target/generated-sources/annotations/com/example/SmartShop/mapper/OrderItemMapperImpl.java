@@ -1,8 +1,8 @@
 package com.example.SmartShop.mapper;
 
-import com.example.SmartShop.dto.OrderItemCreateDTO;
-import com.example.SmartShop.dto.OrderItemDTO;
-import com.example.SmartShop.dto.OrderItemUpdateDTO;
+import com.example.SmartShop.dto.orderItem.OrderItemCreateDTO;
+import com.example.SmartShop.dto.orderItem.OrderItemDTO;
+import com.example.SmartShop.dto.orderItem.OrderItemUpdateDTO;
 import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.OrderItem;
 import com.example.SmartShop.entity.Product;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-27T17:27:45+0100",
+    date = "2025-11-28T17:19:29+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
 )
 @Component

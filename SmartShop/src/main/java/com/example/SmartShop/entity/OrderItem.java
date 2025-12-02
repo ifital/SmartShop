@@ -27,7 +27,7 @@ public class OrderItem {
 
     @Positive
     @Column(nullable = false)
-    private Integer quantity;
+    private int quantity;
 
     @Column(precision = 19, scale = 2, nullable = false)
     private BigDecimal unitPrice; // prix HT au moment de commande
