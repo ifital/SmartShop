@@ -8,6 +8,10 @@ import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.OrderItem;
 import com.example.SmartShop.entity.Product;
 import com.example.SmartShop.entity.enums.OrderStatus;
+import com.example.SmartShop.exception.ClientNotFoundException;
+import com.example.SmartShop.exception.InsufficientStockException;
+import com.example.SmartShop.exception.OrderNotFoundException;
+import com.example.SmartShop.exception.ProductNotFoundException;
 import com.example.SmartShop.mapper.OrderItemMapper;
 import com.example.SmartShop.mapper.OrderMapper;
 import com.example.SmartShop.repository.ClientRepository;
@@ -38,25 +42,24 @@ public class OrderServiceImpl implements OrderService {
     private static final BigDecimal TVA_RATE = new BigDecimal("0.20"); // 20%
 
     // -------------------------------------------------------------------------
-    //                                CREATE ORDER
+    // CREATE ORDER
     // -------------------------------------------------------------------------
     @Override
     public OrderDTO create(OrderCreateDTO dto) {
 
         Client client = clientRepository.findById(dto.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client introuvable"));
+                .orElseThrow(() -> new ClientNotFoundException("Client introuvable"));
 
         Order order = orderMapper.toEntity(dto);
         order.setClient(client);
 
-        // Convert DTOs → OrderItems + validation stock
         List<OrderItem> orderItems = dto.getItems().stream()
                 .map(itemDTO -> {
                     Product product = productRepository.findById(itemDTO.getProductId())
-                            .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                            .orElseThrow(() -> new ProductNotFoundException("Produit introuvable"));
 
                     if (product.getStock() < itemDTO.getQuantity()) {
-                        throw new RuntimeException(
+                        throw new InsufficientStockException(
                                 "Stock insuffisant pour le produit : " + product.getName()
                         );
                     }
@@ -66,14 +69,13 @@ public class OrderServiceImpl implements OrderService {
                     item.setUnitPrice(product.getUnitPrice());
                     item.setLineTotal(product.getUnitPrice()
                             .multiply(BigDecimal.valueOf(itemDTO.getQuantity())));
-
                     return item;
                 })
                 .toList();
 
         orderItems.forEach(order::addItem);
 
-        // Calculs (HT, TVA, TTC, remises…)
+        // Calcul des totaux (HT, TVA, TTC, remises…)
         calculateTotals(order);
 
         Order saved = orderRepository.save(order);
@@ -81,17 +83,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // -------------------------------------------------------------------------
-    //                                UPDATE ORDER
+    // UPDATE ORDER
     // -------------------------------------------------------------------------
     @Override
     public OrderDTO update(String id, OrderUpdateDTO dto) {
 
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+                .orElseThrow(() -> new OrderNotFoundException("Commande introuvable"));
 
         orderMapper.updateEntityFromDTO(dto, order);
 
-        // Recalcul des totaux si changement (promo, discount…)
+        // Recalcul des totaux
         calculateTotals(order);
 
         // Gestion logique des statuts
@@ -106,13 +108,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // -------------------------------------------------------------------------
-    //                                READ
+    // READ
     // -------------------------------------------------------------------------
     @Override
     public OrderDTO getById(String id) {
         return orderRepository.findById(id)
                 .map(orderMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+                .orElseThrow(() -> new OrderNotFoundException("Commande introuvable"));
     }
 
     @Override
@@ -122,18 +124,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // -------------------------------------------------------------------------
-    //                                DELETE
+    // DELETE
     // -------------------------------------------------------------------------
     @Override
     public void delete(String id) {
         if (!orderRepository.existsById(id))
-            throw new RuntimeException("Commande introuvable");
+            throw new OrderNotFoundException("Commande introuvable");
 
         orderRepository.deleteById(id);
     }
 
     // -------------------------------------------------------------------------
-    //                        PRIVATE LOGIC : CALCULS
+    // PRIVATE LOGIC: CALCULS
     // -------------------------------------------------------------------------
     private void calculateTotals(Order order) {
 
@@ -170,11 +172,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     // -------------------------------------------------------------------------
-    //                        PRIVATE LOGIC : STATUTS
+    // PRIVATE LOGIC: STATUTS
     // -------------------------------------------------------------------------
     private void confirmOrder(Order order) {
 
-        // Vérifier stock
         boolean insufficientStock = order.getItems().stream()
                 .anyMatch(item -> item.getProduct().getStock() < item.getQuantity());
 
@@ -183,14 +184,12 @@ public class OrderServiceImpl implements OrderService {
             return;
         }
 
-        // Décrémenter les stocks
         order.getItems().forEach(item -> {
             Product product = item.getProduct();
             product.setStock(product.getStock() - item.getQuantity());
             productRepository.save(product);
         });
 
-        // Mise à jour fidélité
         loyaltyService.updateClientTier(order.getClient());
         clientRepository.save(order.getClient());
 

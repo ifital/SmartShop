@@ -16,9 +16,19 @@ public class GlobalExceptionHandler {
 
     // -------------------- CUSTOM EXCEPTIONS --------------------
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "UserNotFoundException", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleProductNotFound(ProductNotFoundException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.NOT_FOUND, "ProductNotFoundException", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(ProductAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleProductAlreadyExists(ProductAlreadyExistsException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, "ProductAlreadyExistsException", ex.getMessage(), request);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
@@ -31,14 +41,29 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, "ClientNotFoundException", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(OrderItemNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleOrderItemNotFound(OrderItemNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "OrderItemNotFoundException", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<Map<String, Object>> handleInsufficientStock(InsufficientStockException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "InsufficientStockException", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ResponseEntity<Map<String, Object>> handleEmailAlreadyUsedException(EmailAlreadyUsedException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, "EmailAlreadyUsedException", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.FORBIDDEN, "AccessDeniedException", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handlePaymentNotFound(PaymentNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "PaymentNotFoundException", ex.getMessage(), request);
     }
 
     // -------------------- VALIDATION ERRORS --------------------

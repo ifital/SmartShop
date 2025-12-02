@@ -1,11 +1,12 @@
 package com.example.SmartShop.service.impl;
 
-
 import com.example.SmartShop.dto.payment.PaymentCreateDTO;
 import com.example.SmartShop.dto.payment.PaymentDTO;
 import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
 import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.Payment;
+import com.example.SmartShop.exception.OrderNotFoundException;
+import com.example.SmartShop.exception.PaymentNotFoundException;
 import com.example.SmartShop.mapper.PaymentMapper;
 import com.example.SmartShop.repository.OrderRepository;
 import com.example.SmartShop.repository.PaymentRepository;
@@ -29,7 +30,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDTO create(PaymentCreateDTO dto) {
         Order order = orderRepository.findById(dto.getOrderId())
-                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+                .orElseThrow(() -> new OrderNotFoundException("Commande introuvable"));
 
         Payment payment = paymentMapper.toEntity(dto);
         payment.setOrder(order);
@@ -45,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public PaymentDTO update(String id, PaymentUpdateDTO dto) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+                .orElseThrow(() -> new PaymentNotFoundException("Paiement introuvable"));
 
         paymentMapper.updateEntityFromDTO(dto, payment);
 
@@ -57,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentDTO getById(String id) {
         return paymentRepository.findById(id)
                 .map(paymentMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("Paiement introuvable"));
+                .orElseThrow(() -> new PaymentNotFoundException("Paiement introuvable"));
     }
 
     @Override
@@ -83,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void delete(String id) {
         if (!paymentRepository.existsById(id)) {
-            throw new RuntimeException("Paiement introuvable");
+            throw new PaymentNotFoundException("Paiement introuvable");
         }
         paymentRepository.deleteById(id);
     }

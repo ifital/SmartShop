@@ -5,6 +5,7 @@ import com.example.SmartShop.dto.order.OrderDTO;
 import com.example.SmartShop.dto.order.OrderUpdateDTO;
 import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
+import com.example.SmartShop.exception.AccessDeniedException;
 import com.example.SmartShop.service.OrderService;
 import com.example.SmartShop.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -29,14 +30,14 @@ public class OrderController {
     // -------------------------------
     // Vérification ADMIN via HttpSession
     // -------------------------------
-    private void checkAdmin(HttpSession session) {
-        UserDTO currentUser = userService.getCurrentUser(session);
-        if (currentUser.getRole() != UserRole.ADMIN) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Accès refusé");
+        private void checkAdmin(HttpSession session) {
+            UserDTO currentUser = userService.getCurrentUser(session);
+            if (currentUser.getRole() != UserRole.ADMIN) {
+                throw new AccessDeniedException("Accès refusé");
+            }
         }
-    }
 
-    // -------------------------------
+        // -------------------------------
     // CREATE ORDER (ADMIN ONLY)
     // -------------------------------
     @PostMapping

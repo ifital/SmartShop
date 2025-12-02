@@ -4,6 +4,8 @@ import com.example.SmartShop.dto.product.ProductCreateDTO;
 import com.example.SmartShop.dto.product.ProductDTO;
 import com.example.SmartShop.dto.product.ProductUpdateDTO;
 import com.example.SmartShop.entity.Product;
+import com.example.SmartShop.exception.ProductAlreadyExistsException;
+import com.example.SmartShop.exception.ProductNotFoundException;
 import com.example.SmartShop.mapper.ProductMapper;
 import com.example.SmartShop.repository.OrderItemRepository;
 import com.example.SmartShop.repository.ProductRepository;
@@ -24,7 +26,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO create(ProductCreateDTO dto) {
         if (productRepository.existsByNameAndDeletedFalse(dto.getName())) {
-            throw new RuntimeException("Produit déjà existant !");
+            throw new ProductAlreadyExistsException("Produit déjà existant !");
         }
 
         Product product = productMapper.toEntity(dto);
@@ -37,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO update(String id, ProductUpdateDTO dto) {
         Product product = productRepository.findById(id)
                 .filter(p -> !p.isDeleted())
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() -> new ProductNotFoundException("Produit introuvable"));
 
         productMapper.updateEntityFromDTO(dto, product);
         Product updated = productRepository.save(product);
@@ -49,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO getById(String id) {
         Product product = productRepository.findById(id)
                 .filter(p -> !p.isDeleted())
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() -> new ProductNotFoundException("Produit introuvable"));
 
         return productMapper.toDTO(product);
     }
@@ -63,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(String id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() -> new ProductNotFoundException("Produit introuvable"));
 
         boolean hasOrders = orderItemRepository.existsByProductId(id);
 

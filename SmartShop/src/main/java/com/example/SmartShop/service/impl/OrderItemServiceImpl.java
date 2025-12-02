@@ -5,10 +5,13 @@ import com.example.SmartShop.dto.orderItem.OrderItemDTO;
 import com.example.SmartShop.dto.orderItem.OrderItemUpdateDTO;
 import com.example.SmartShop.entity.OrderItem;
 import com.example.SmartShop.entity.Product;
+import com.example.SmartShop.exception.OrderItemNotFoundException;
+import com.example.SmartShop.exception.ProductNotFoundException;
 import com.example.SmartShop.mapper.OrderItemMapper;
 import com.example.SmartShop.repository.OrderItemRepository;
 import com.example.SmartShop.repository.ProductRepository;
 import com.example.SmartShop.service.OrderItemService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +34,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItemDTO create(OrderItemCreateDTO dto) {
 
         Product product = productRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() -> new ProductNotFoundException("Produit introuvable"));
 
         OrderItem item = orderItemMapper.toEntity(dto);
 
@@ -48,12 +51,13 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     public OrderItemDTO update(String id, OrderItemUpdateDTO dto) {
+
         OrderItem item = orderItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem introuvable"));
+                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem introuvable"));
 
         orderItemMapper.updateEntityFromDTO(dto, item);
 
-        // recalcul du total
+        // Recalcul du total
         item.setLineTotal(
                 item.getUnitPrice()
                         .multiply(BigDecimal.valueOf(item.getQuantity()))
@@ -67,13 +71,13 @@ public class OrderItemServiceImpl implements OrderItemService {
     public OrderItemDTO getById(String id) {
         return orderItemRepository.findById(id)
                 .map(orderItemMapper::toDTO)
-                .orElseThrow(() -> new RuntimeException("OrderItem introuvable"));
+                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem introuvable"));
     }
 
     @Override
     public void delete(String id) {
         OrderItem item = orderItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem introuvable"));
+                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem introuvable"));
 
         orderItemRepository.delete(item);
     }

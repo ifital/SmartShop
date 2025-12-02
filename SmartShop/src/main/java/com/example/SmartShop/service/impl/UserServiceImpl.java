@@ -4,6 +4,9 @@ import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.dto.user.UserLoginDTO;
 import com.example.SmartShop.dto.user.UserRegisterDTO;
 import com.example.SmartShop.entity.User;
+import com.example.SmartShop.exception.EmailAlreadyUsedException;
+import com.example.SmartShop.exception.UserNotFoundException;
+import com.example.SmartShop.exception.InvalidCredentialsException;
 import com.example.SmartShop.mapper.UserMapper;
 import com.example.SmartShop.repository.UserRepository;
 import com.example.SmartShop.service.UserService;
@@ -25,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO register(UserRegisterDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new RuntimeException("Nom d'utilisateur déjà utilisé !");
+            throw new EmailAlreadyUsedException("Nom d'utilisateur déjà utilisé !");
         }
 
         User user = userMapper.toEntity(dto);
@@ -38,10 +41,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO login(UserLoginDTO dto, HttpSession session) {
         User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new RuntimeException("Nom d'utilisateur incorrect"));
+                .orElseThrow(() -> new InvalidCredentialsException("Nom d'utilisateur incorrect"));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new RuntimeException(" mot de passe incorrect");
+            throw new InvalidCredentialsException("Mot de passe incorrect");
         }
 
         session.setAttribute(SESSION_USER_KEY, user.getId());
@@ -57,11 +60,11 @@ public class UserServiceImpl implements UserService {
     public UserDTO getCurrentUser(HttpSession session) {
         String userId = (String) session.getAttribute(SESSION_USER_KEY);
         if (userId == null) {
-            throw new RuntimeException("Aucun utilisateur connecté");
+            throw new UserNotFoundException("Aucun utilisateur connecté");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+                .orElseThrow(() -> new UserNotFoundException("Utilisateur introuvable"));
 
         return userMapper.toDTO(user);
     }
