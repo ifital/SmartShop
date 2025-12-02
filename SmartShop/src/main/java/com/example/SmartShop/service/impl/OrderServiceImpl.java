@@ -2,16 +2,18 @@ package com.example.SmartShop.service.impl;
 
 import com.example.SmartShop.dto.order.OrderCreateDTO;
 import com.example.SmartShop.dto.order.OrderDTO;
-import com.example.SmartShop.dto.orderItem.OrderItemCreateDTO;
 import com.example.SmartShop.dto.order.OrderUpdateDTO;
+import com.example.SmartShop.dto.orderItem.OrderItemCreateDTO;
 import com.example.SmartShop.entity.Client;
 import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.OrderItem;
+import com.example.SmartShop.entity.enums.OrderStatus;
 import com.example.SmartShop.mapper.OrderItemMapper;
 import com.example.SmartShop.mapper.OrderMapper;
 import com.example.SmartShop.repository.ClientRepository;
 import com.example.SmartShop.repository.OrderRepository;
 import com.example.SmartShop.repository.ProductRepository;
+import com.example.SmartShop.service.LoyaltyService;
 import com.example.SmartShop.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,10 +34,15 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
+    // Service de fidélité
+    private final LoyaltyService loyaltyService;
+
     // TVA Fixe
     private static final BigDecimal TVA_RATE = new BigDecimal("0.20"); // 20%
 
-    // CREATE ORDER
+    // ------------------------------------------------------
+    //                      CREATE ORDER
+    // ------------------------------------------------------
     @Override
     public OrderDTO create(OrderCreateDTO dto) {
 
@@ -45,10 +52,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.toEntity(dto);
         order.setClient(client);
 
-        // 3. Ajouter les OrderItems
+        // Ajouter les items
         dto.getItems().forEach(itemDTO -> addItemToOrder(order, itemDTO));
 
-        // 4. Recalcul des totaux
+        // Calcul complet des totaux avec remise fidélité
         calculateTotals(order);
 
         Order saved = orderRepository.save(order);
@@ -56,8 +63,9 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDTO(saved);
     }
 
-    // UPDATE ORDER
-
+    // ------------------------------------------------------
+    //                      UPDATE ORDER
+    // ------------------------------------------------------
     @Override
     public OrderDTO update(String id, OrderUpdateDTO dto) {
         Order order = orderRepository.findById(id)
@@ -65,16 +73,23 @@ public class OrderServiceImpl implements OrderService {
 
         orderMapper.updateEntityFromDTO(dto, order);
 
-        // recalcul après changement promo/status
+        // Recalculer les totaux (promo, fidélité…)
         calculateTotals(order);
+
+        // Si commande confirmée → mise à jour du Tier du client
+        if (dto.getStatus() == OrderStatus.CONFIRMED) {
+            loyaltyService.updateClientTier(order.getClient());
+            clientRepository.save(order.getClient());
+        }
 
         Order updated = orderRepository.save(order);
 
         return orderMapper.toDTO(updated);
     }
 
-    // GET BY ID
-
+    // ------------------------------------------------------
+    //                      GET BY ID
+    // ------------------------------------------------------
     @Override
     public OrderDTO getById(String id) {
         return orderRepository.findById(id)
@@ -82,15 +97,18 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Commande introuvable"));
     }
 
-    // GET ALL
+    // ------------------------------------------------------
+    //                      GET ALL
+    // ------------------------------------------------------
     @Override
     public Page<OrderDTO> getAll(Pageable pageable) {
         return orderRepository.findAll(pageable)
                 .map(orderMapper::toDTO);
     }
 
-    // DELETE
-
+    // ------------------------------------------------------
+    //                      DELETE ORDER
+    // ------------------------------------------------------
     @Override
     public void delete(String id) {
         if (!orderRepository.existsById(id)) {
@@ -99,12 +117,13 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(id);
     }
 
-    // ---------- GESTION DES ITEMS ----------
+    // ------------------------------------------------------
+    //                GESTION DES ORDER ITEMS
+    // ------------------------------------------------------
 
     private void addItemToOrder(Order order, OrderItemCreateDTO itemDTO) {
-        ProductRepository productRepo = productRepository;
 
-        var product = productRepo.findById(itemDTO.getProductId())
+        var product = productRepository.findById(itemDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
         OrderItem item = orderItemMapper.toEntity(itemDTO);
@@ -117,28 +136,36 @@ public class OrderServiceImpl implements OrderService {
         order.addItem(item);
     }
 
-    // ---------- CALCUL DES TOTAUX ----------
+    // ------------------------------------------------------
+    //                  CALCUL DES TOTAUX
+    // ------------------------------------------------------
 
     private void calculateTotals(Order order) {
 
-        // Subtotal = somme (unitPrice * qty)
+        Client client = order.getClient();
+
+        // 1) Subtotal = somme (unitPrice * qty)
         BigDecimal subTotal = order.getItems().stream()
                 .map(OrderItem::getLineTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         order.setSubTotal(subTotal);
 
-        // Remise
-        BigDecimal discount = BigDecimal.ZERO;
+        // ------------------- REMISE FIDÉLITÉ -------------------
+        BigDecimal loyaltyDiscount = loyaltyService.applyTierDiscount(client, subTotal);
 
+        // ------------------- REMISE PROMO ----------------------
+        BigDecimal promoDiscount = BigDecimal.ZERO;
         if (order.getPromoCode() != null && !order.getPromoCode().isEmpty()) {
-            discount = subTotal.multiply(new BigDecimal("0.05")); // promo 5%
+            promoDiscount = subTotal.multiply(new BigDecimal("0.05")); // promo 5%
         }
 
-        order.setTotalDiscount(discount);
+        // Remise totale
+        BigDecimal totalDiscount = loyaltyDiscount.add(promoDiscount);
+        order.setTotalDiscount(totalDiscount);
 
-        // Net HT = Subtotal - Discount
-        BigDecimal netHt = subTotal.subtract(discount);
+        // Net HT = Subtotal - Discounts
+        BigDecimal netHt = subTotal.subtract(totalDiscount);
         order.setNetHt(netHt);
 
         // TVA = netHt * TVA_RATE
@@ -149,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalTtc = netHt.add(vat);
         order.setTotalTtc(totalTtc);
 
-        // Reste à payer = Total TTC (si paiements arrivent après)
+        // Reste à payer
         order.setAmountRemaining(totalTtc);
     }
 }
