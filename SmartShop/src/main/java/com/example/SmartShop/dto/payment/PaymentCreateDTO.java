@@ -22,4 +22,12 @@ public class PaymentCreateDTO {
     private PaymentType type;
 
     private LocalDateTime paymentDate; // optionnel, fournie par client
+
+    private String chequeNumber;
+
+    private String bankName;
+
+    private LocalDateTime dueDate;
+
+    private String transferReference;
 }

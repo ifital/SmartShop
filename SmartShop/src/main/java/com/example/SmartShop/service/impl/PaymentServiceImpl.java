@@ -5,6 +5,7 @@ import com.example.SmartShop.dto.payment.PaymentDTO;
 import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
 import com.example.SmartShop.entity.Order;
 import com.example.SmartShop.entity.Payment;
+import com.example.SmartShop.entity.enums.PaymentStatus;
 import com.example.SmartShop.exception.OrderNotFoundException;
 import com.example.SmartShop.exception.PaymentNotFoundException;
 import com.example.SmartShop.mapper.PaymentMapper;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -29,29 +31,66 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDTO create(PaymentCreateDTO dto) {
+
         Order order = orderRepository.findById(dto.getOrderId())
                 .orElseThrow(() -> new OrderNotFoundException("Commande introuvable"));
 
         Payment payment = paymentMapper.toEntity(dto);
         payment.setOrder(order);
 
-        // Déterminer le numéro de paiement (séquentiel)
-        int nextNumber = (int) paymentRepository.findByOrderId(order.getId()).size() + 1;
+        // Numéro séquentiel
+        int nextNumber = paymentRepository.findByOrderId(order.getId()).size() + 1;
         payment.setPaymentNumber(nextNumber);
 
-        Payment saved = paymentRepository.save(payment);
-        return paymentMapper.toDTO(saved);
+        // Date de paiement par défaut
+        if (payment.getPaymentDate() == null) {
+            payment.setPaymentDate(java.time.LocalDateTime.now());
+        }
+
+        // LOGIQUE MÉTIER DES TYPES DE PAIEMENT
+        switch (dto.getType()) {
+
+            case ESPECES -> {
+                if (payment.getAmount().compareTo(new BigDecimal("20000")) > 0) {
+                    throw new IllegalArgumentException("Le paiement en espèces ne peut pas dépasser 20 000 DH");
+                }
+                payment.setStatus(PaymentStatus.ENCAISSE);
+            }
+
+            case CHEQUE -> {
+                if (dto.getChequeNumber() == null || dto.getBankName() == null) {
+                    throw new IllegalArgumentException("Numéro de chèque et banque obligatoires");
+                }
+                payment.setStatus(PaymentStatus.EN_ATTENTE);
+            }
+
+            case VIREMENT -> {
+                if (dto.getTransferReference() == null || dto.getBankName() == null) {
+                    throw new IllegalArgumentException("Référence et banque obligatoires");
+                }
+                payment.setStatus(PaymentStatus.ENCAISSE);
+            }
+        }
+
+        return paymentMapper.toDTO(paymentRepository.save(payment));
     }
 
     @Override
     public PaymentDTO update(String id, PaymentUpdateDTO dto) {
+
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new PaymentNotFoundException("Paiement introuvable"));
 
+        // RÈGLE : un paiement encaissé ne peut plus revenir en arrière
+        if (payment.getStatus() == PaymentStatus.ENCAISSE &&
+                dto.getStatus() != PaymentStatus.ENCAISSE) {
+
+            throw new IllegalArgumentException("Un paiement encaissé ne peut pas être modifié");
+        }
+
         paymentMapper.updateEntityFromDTO(dto, payment);
 
-        Payment updated = paymentRepository.save(payment);
-        return paymentMapper.toDTO(updated);
+        return paymentMapper.toDTO(paymentRepository.save(payment));
     }
 
     @Override

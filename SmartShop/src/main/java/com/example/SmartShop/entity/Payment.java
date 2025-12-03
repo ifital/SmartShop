@@ -44,4 +44,12 @@ public class Payment {
     private LocalDateTime paymentDate; // date fournie par client
 
     private LocalDateTime encashmentDate; // date d'encaissement si applicable
+
+    private String chequeNumber;      // obligatoire pour CHÈQUE
+
+    private String bankName;          // CHÈQUE & VIREMENT
+
+    private LocalDateTime dueDate;    // échéance CHÈQUE
+
+    private String transferReference; // obligatoire pour VIREMENT
 }

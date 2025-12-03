@@ -18,4 +18,8 @@ public class PaymentDTO {
     private PaymentStatus status;
     private LocalDateTime paymentDate;
     private LocalDateTime encashmentDate;
+    private String chequeNumber;
+    private String bankName;
+    private LocalDateTime dueDate;
+    private String transferReference;
 }
