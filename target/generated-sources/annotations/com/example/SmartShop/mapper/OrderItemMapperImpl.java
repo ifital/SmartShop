@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-28T17:19:29+0100",
+    date = "2025-12-03T16:04:27+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
 )
 @Component
@@ -44,7 +44,9 @@ public class OrderItemMapperImpl implements OrderItemMapper {
 
         OrderItem.OrderItemBuilder orderItem = OrderItem.builder();
 
-        orderItem.quantity( dto.getQuantity() );
+        if ( dto.getQuantity() != null ) {
+            orderItem.quantity( dto.getQuantity() );
+        }
 
         return orderItem.build();
     }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-28T17:19:29+0100",
+    date = "2025-12-03T16:04:27+0100",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.16 (Microsoft)"
 )
 @Component
@@ -28,6 +28,10 @@ public class PaymentMapperImpl implements PaymentMapper {
         payment.amount( dto.getAmount() );
         payment.type( dto.getType() );
         payment.paymentDate( dto.getPaymentDate() );
+        payment.chequeNumber( dto.getChequeNumber() );
+        payment.bankName( dto.getBankName() );
+        payment.dueDate( dto.getDueDate() );
+        payment.transferReference( dto.getTransferReference() );
 
         return payment.build();
     }
@@ -48,6 +52,10 @@ public class PaymentMapperImpl implements PaymentMapper {
         paymentDTO.setStatus( payment.getStatus() );
         paymentDTO.setPaymentDate( payment.getPaymentDate() );
         paymentDTO.setEncashmentDate( payment.getEncashmentDate() );
+        paymentDTO.setChequeNumber( payment.getChequeNumber() );
+        paymentDTO.setBankName( payment.getBankName() );
+        paymentDTO.setDueDate( payment.getDueDate() );
+        paymentDTO.setTransferReference( payment.getTransferReference() );
 
         return paymentDTO;
     }
