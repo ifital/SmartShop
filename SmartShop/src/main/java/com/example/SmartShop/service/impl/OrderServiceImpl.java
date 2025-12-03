@@ -176,6 +176,13 @@ public class OrderServiceImpl implements OrderService {
     // -------------------------------------------------------------------------
     private void confirmOrder(Order order) {
 
+        // la commande doit être totalement payée avant confirmation
+        if (order.getAmountRemaining().compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalStateException(
+                    "Impossible de confirmer la commande : le montant total n’est pas encore payé."
+            );
+        }
+
         boolean insufficientStock = order.getItems().stream()
                 .anyMatch(item -> item.getProduct().getStock() < item.getQuantity());
 
