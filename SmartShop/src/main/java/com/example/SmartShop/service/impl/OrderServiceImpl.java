@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -52,6 +53,14 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderMapper.toEntity(dto);
         order.setClient(client);
+
+        // Initialisation des champs obligatoires NOT NULL
+        if (order.getCreatedAt() == null) {
+            order.setCreatedAt(LocalDateTime.now());
+        }
+        if (order.getStatus() == null) {
+            order.setStatus(OrderStatus.PENDING);
+        }
 
         List<OrderItem> orderItems = dto.getItems().stream()
                 .map(itemDTO -> {
@@ -81,7 +90,6 @@ public class OrderServiceImpl implements OrderService {
         Order saved = orderRepository.save(order);
         return orderMapper.toDTO(saved);
     }
-
     // -------------------------------------------------------------------------
     // UPDATE ORDER
     // -------------------------------------------------------------------------
