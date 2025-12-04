@@ -1,6 +1,5 @@
 package com.example.SmartShop.controller;
 
-
 import com.example.SmartShop.dto.payment.PaymentCreateDTO;
 import com.example.SmartShop.dto.payment.PaymentDTO;
 import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
@@ -8,6 +7,10 @@ import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
 import com.example.SmartShop.service.PaymentService;
 import com.example.SmartShop.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +25,12 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Tag(name = "Payments", description = "Gestion des paiements")
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final UserService userService;
 
-    // -------------------------------
-    // Vérification ADMIN via HttpSession
-    // -------------------------------
     private void checkAdmin(HttpSession session) {
         UserDTO currentUser = userService.getCurrentUser(session);
         if (currentUser.getRole() != UserRole.ADMIN) {
@@ -37,9 +38,11 @@ public class PaymentController {
         }
     }
 
-    // -------------------------------
-    // CREATE (ADMIN ONLY)
-    // -------------------------------
+    @Operation(summary = "Créer un paiement", description = "Création d'un paiement pour une commande (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Paiement créé avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @PostMapping
     public ResponseEntity<PaymentDTO> createPayment(
             @Valid @RequestBody PaymentCreateDTO dto,
@@ -50,9 +53,11 @@ public class PaymentController {
         return ResponseEntity.ok(created);
     }
 
-    // -------------------------------
-    // GET BY ID (ADMIN ONLY)
-    // -------------------------------
+    @Operation(summary = "Récupérer un paiement par ID", description = "Retourne les détails d'un paiement (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Paiement récupéré avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<PaymentDTO> getPayment(
             @PathVariable String id,
@@ -63,9 +68,11 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
-    // -------------------------------
-    // GET ALL (ADMIN ONLY, paginated)
-    // -------------------------------
+    @Operation(summary = "Récupérer tous les paiements", description = "Retourne une liste paginée de paiements (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Paiements récupérés avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @GetMapping
     public ResponseEntity<Page<PaymentDTO>> getAllPayments(
             @PageableDefault(size = 10, page = 0) Pageable pageable,
@@ -76,9 +83,11 @@ public class PaymentController {
         return ResponseEntity.ok(payments);
     }
 
-    // -------------------------------
-    // GET BY ORDER ID (ADMIN ONLY, paginated)
-    // -------------------------------
+    @Operation(summary = "Récupérer les paiements d'une commande", description = "Retourne une liste paginée de paiements pour une commande donnée (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Paiements récupérés avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @GetMapping("/order/{orderId}")
     public ResponseEntity<Page<PaymentDTO>> getPaymentsByOrder(
             @PathVariable String orderId,
@@ -90,9 +99,11 @@ public class PaymentController {
         return ResponseEntity.ok(payments);
     }
 
-    // -------------------------------
-    // UPDATE (ADMIN ONLY)
-    // -------------------------------
+    @Operation(summary = "Mettre à jour un paiement", description = "Met à jour le statut ou la date d'encaissement d'un paiement (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Paiement mis à jour avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<PaymentDTO> updatePayment(
             @PathVariable String id,
@@ -104,9 +115,11 @@ public class PaymentController {
         return ResponseEntity.ok(updated);
     }
 
-    // -------------------------------
-    // DELETE (ADMIN ONLY)
-    // -------------------------------
+    @Operation(summary = "Supprimer un paiement", description = "Supprime un paiement existant (Admin seulement)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Paiement supprimé avec succès"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé pour les non-admins")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePayment(
             @PathVariable String id,
