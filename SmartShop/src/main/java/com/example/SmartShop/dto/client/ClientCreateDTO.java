@@ -9,9 +9,14 @@ import lombok.*;
 @Builder
 public class ClientCreateDTO {
 
+    private String username;
+
+    private String password;
+
+    private String role;
+
     private String name;
 
     private String email;
 
-    private CustomerTier tier;
 }

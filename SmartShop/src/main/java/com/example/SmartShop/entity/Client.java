@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-
 @Entity
 @Table(name = "clients")
 @Data
@@ -27,6 +26,6 @@ public class Client extends User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CustomerTier tier = CustomerTier.BASIC; // BASIC, SILVER, GOLD, PLATINUM
-
+    @Builder.Default
+    private CustomerTier tier = CustomerTier.BASIC; // BASIC par défaut
 }

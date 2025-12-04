@@ -15,6 +15,8 @@ public interface ClientMapper {
 
     // CREATE DTO -> ENTITY
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "password", source = "password")
     Client toEntity(ClientCreateDTO dto);
 
     // UPDATE DTO -> ENTITY (partial update)
