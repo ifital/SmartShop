@@ -234,6 +234,6 @@ Chaque réponse d'erreur contient: timestamp, code HTTP, type d'erreur, message 
 
 ## Diagramme de classe
 
-![SmartShop.svg](../../SmartShop.svg)
+![SmartShop](https://github.com/user-attachments/assets/a54586ac-ba24-41de-ad6e-674320a156d5)
 
 ---
