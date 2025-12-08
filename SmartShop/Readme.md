@@ -16,8 +16,8 @@ SmartShop est une application web backend REST API destinée à **MicroTech Maro
 ## 🛠️ Technologies Utilisées
 
 - **Framework**: Spring Boot
-- **Langage**: Java 8+
-- **Base de données**: PostgreSQL / MySQL
+- **Langage**: Java 17
+- **Base de données**: PostgreSQL
 - **ORM**: Spring Data JPA / Hibernate
 - **Validation**: Bean Validation (Hibernate Validator)
 - **Mapping**: MapStruct
