@@ -5,6 +5,7 @@ import com.example.SmartShop.dto.payment.PaymentDTO;
 import com.example.SmartShop.dto.payment.PaymentUpdateDTO;
 import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
+import com.example.SmartShop.exception.AccessDeniedException;
 import com.example.SmartShop.service.PaymentService;
 import com.example.SmartShop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +39,13 @@ public class PaymentController {
         }
     }
 
+    private void checkClient(HttpSession session) {
+        UserDTO currentUser = userService.getCurrentUser(session);
+        if (currentUser.getRole() != UserRole.CLIENT) {
+            throw new AccessDeniedException("Accès refusé");
+        }
+    }
+
     @Operation(summary = "Créer un paiement", description = "Création d'un paiement pour une commande (Admin seulement)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Paiement créé avec succès"),
@@ -48,7 +56,7 @@ public class PaymentController {
             @Valid @RequestBody PaymentCreateDTO dto,
             HttpSession session
     ) {
-        checkAdmin(session);
+        checkClient(session);
         PaymentDTO created = paymentService.create(dto);
         return ResponseEntity.ok(created);
     }

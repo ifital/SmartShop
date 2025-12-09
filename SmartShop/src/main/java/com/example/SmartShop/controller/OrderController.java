@@ -37,6 +37,13 @@ public class OrderController {
         }
     }
 
+    private void checkClient(HttpSession session) {
+        UserDTO currentUser = userService.getCurrentUser(session);
+        if (currentUser.getRole() != UserRole.CLIENT) {
+            throw new AccessDeniedException("Accès refusé");
+        }
+    }
+
     @Operation(summary = "Créer une commande", description = "Création d'une commande (Admin seulement)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Commande créée avec succès"),
@@ -47,7 +54,7 @@ public class OrderController {
             @Valid @RequestBody OrderCreateDTO dto,
             HttpSession session
     ) {
-        checkAdmin(session);
+        checkClient(session);
         OrderDTO created = orderService.create(dto);
         return ResponseEntity.ok(created);
     }
