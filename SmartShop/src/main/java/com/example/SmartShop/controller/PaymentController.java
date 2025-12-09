@@ -39,13 +39,6 @@ public class PaymentController {
         }
     }
 
-    private void checkClient(HttpSession session) {
-        UserDTO currentUser = userService.getCurrentUser(session);
-        if (currentUser.getRole() != UserRole.CLIENT) {
-            throw new AccessDeniedException("Accès refusé");
-        }
-    }
-
     @Operation(summary = "Créer un paiement", description = "Création d'un paiement pour une commande (Admin seulement)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Paiement créé avec succès"),
@@ -56,7 +49,7 @@ public class PaymentController {
             @Valid @RequestBody PaymentCreateDTO dto,
             HttpSession session
     ) {
-        checkClient(session);
+        checkAdmin(session);
         PaymentDTO created = paymentService.create(dto);
         return ResponseEntity.ok(created);
     }

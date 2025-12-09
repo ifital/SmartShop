@@ -4,6 +4,7 @@ import com.example.SmartShop.dto.clientStatistic.ClientOrderHistoryDTO;
 import com.example.SmartShop.dto.clientStatistic.ClientOrderStatisticsDTO;
 import com.example.SmartShop.dto.user.UserDTO;
 import com.example.SmartShop.entity.enums.UserRole;
+import com.example.SmartShop.exception.AccessDeniedException;
 import com.example.SmartShop.service.ClientStatisticsService;
 import com.example.SmartShop.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +35,13 @@ public class ClientStatisticsController {
         }
     }
 
+    private void checkClient(HttpSession session) {
+        UserDTO currentUser = userService.getCurrentUser(session);
+        if (currentUser.getRole() != UserRole.CLIENT) {
+            throw new AccessDeniedException("Accès refusé");
+        }
+    }
+
     @Operation(summary = "Statistiques des commandes d'un client", description = "Retourne le nombre total de commandes, montant total dépensé, etc.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Statistiques récupérées avec succès"),
@@ -59,7 +67,7 @@ public class ClientStatisticsController {
             @PathVariable String clientId,
             HttpSession session
     ) {
-        checkAdmin(session);
+        checkClient(session);
         List<ClientOrderHistoryDTO> history = statisticsService.getClientOrderHistory(clientId);
         return ResponseEntity.ok(history);
     }
